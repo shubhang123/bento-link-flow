@@ -40,25 +40,30 @@ const getCardSize = (priority: number, globalPriority: number, linkId: string): 
   
   // Use link ID to create consistent but varied sizing
   const idHash = linkId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const sizeVariant = idHash % 8; // 8 different size variants
+  const sizeVariant = idHash % 12; // 12 different size variants for more variety
   
-  if (effectivePriority >= 85) {
-    // Highest priority gets extra large or large variants
-    return sizeVariant < 3 ? 'card-extra-large' : 'card-large';
-  } else if (effectivePriority >= 70) {
-    // High priority gets wide, large, or tall variants
-    if (sizeVariant < 2) return 'card-large';
-    if (sizeVariant < 4) return 'card-wide';
-    return 'card-tall';
+  if (effectivePriority >= 90) {
+    // Highest priority gets hero or feature cards
+    return sizeVariant < 2 ? 'card-hero' : 'card-feature';
+  } else if (effectivePriority >= 75) {
+    // Very high priority gets large variants
+    if (sizeVariant < 2) return 'card-wide-large';
+    if (sizeVariant < 4) return 'card-tall';
+    return 'card-large';
+  } else if (effectivePriority >= 60) {
+    // High priority gets medium-large variants
+    if (sizeVariant < 3) return 'card-square-large';
+    if (sizeVariant < 6) return 'card-wide';
+    return 'card-large';
   } else if (effectivePriority >= 40) {
     // Medium priority gets varied medium sizes
-    if (sizeVariant < 2) return 'card-medium-wide';
-    if (sizeVariant < 4) return 'card-medium-tall';
+    if (sizeVariant < 3) return 'card-medium-wide';
+    if (sizeVariant < 6) return 'card-medium-tall';
     return 'card-medium';
   }
   
   // Low priority stays small but with some variation
-  return sizeVariant < 2 ? 'card-medium' : 'card-small';
+  return sizeVariant < 4 ? 'card-medium' : 'card-small';
 };
 
 const getPriorityColor = (priority: number): string => {
@@ -156,16 +161,19 @@ export const LinkCard = ({ link, onEdit, onDelete, globalPriority }: LinkCardPro
             {link.title}
           </h3>
           
-          {link.description && cardSize !== 'card-small' && (
-            <p className="text-sm text-white/80 line-clamp-2 mb-2">
+          {link.description && !['card-small', 'card-medium'].includes(cardSize) && (
+            <p className={cn(
+              "text-white/80 mb-2",
+              ['card-hero', 'card-feature'].includes(cardSize) ? "text-base line-clamp-3" : "text-sm line-clamp-2"
+            )}>
               {link.description}
             </p>
           )}
 
           {/* Tags */}
-          {link.tags.length > 0 && cardSize === 'card-large' && (
+          {link.tags.length > 0 && ['card-hero', 'card-feature', 'card-wide-large', 'card-large', 'card-square-large'].includes(cardSize) && (
             <div className="flex flex-wrap gap-1 mb-2">
-              {link.tags.slice(0, 3).map((tag) => (
+              {link.tags.slice(0, cardSize === 'card-hero' ? 5 : 3).map((tag) => (
                 <Badge 
                   key={tag} 
                   variant="secondary" 
@@ -174,9 +182,9 @@ export const LinkCard = ({ link, onEdit, onDelete, globalPriority }: LinkCardPro
                   {tag}
                 </Badge>
               ))}
-              {link.tags.length > 3 && (
+              {link.tags.length > (cardSize === 'card-hero' ? 5 : 3) && (
                 <Badge variant="secondary" className="text-xs bg-white/20 text-white border-0">
-                  +{link.tags.length - 3}
+                  +{link.tags.length - (cardSize === 'card-hero' ? 5 : 3)}
                 </Badge>
               )}
             </div>
