@@ -176,6 +176,14 @@ export default {
 					'50%': {
 						transform: 'translateY(-5px)'
 					}
+				},
+				'spherical-float': {
+					'0%, 100%': {
+						transform: 'translateZ(0px) rotateX(0deg) rotateY(0deg)'
+					},
+					'50%': {
+						transform: 'translateZ(10px) rotateX(2deg) rotateY(2deg)'
+					}
 				}
 			},
 			animation: {
@@ -184,7 +192,8 @@ export default {
 				'card-in': 'card-in 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
 				'card-out': 'card-out 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
 				'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-				'float': 'float 3s ease-in-out infinite'
+				'float': 'float 3s ease-in-out infinite',
+				'spherical-float': 'spherical-float 4s ease-in-out infinite'
 			}
 		}
 	},

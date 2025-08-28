@@ -118,13 +118,17 @@ export const LinkCard = ({ link, onEdit, onDelete, globalPriority }: LinkCardPro
   return (
     <div
       className={cn(
-        'bento-card relative overflow-hidden cursor-pointer group animate-card-in',
-        cardSize,
+        'relative overflow-hidden cursor-pointer group animate-card-in rounded-xl transition-all duration-300 ease-out',
+        'bg-gradient-to-br shadow-card hover:shadow-card-hover',
         gradientClass
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleOpenLink}
+      style={{
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+      }}
     >
       {/* Content Overlay */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />

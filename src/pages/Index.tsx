@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import { Link, LinkCategory, LinkManagerState } from '@/types/link';
-import { LinkCard } from '@/components/LinkCard';
+import { SphericalGrid } from '@/components/SphericalGrid';
 import { PrioritySlider } from '@/components/PrioritySlider';
 import { AddLinkDialog } from '@/components/AddLinkDialog';
 import { SearchBar } from '@/components/SearchBar';
 import { Button } from '@/components/ui/button';
-import { Plus, Sparkles, Link as LinkIcon } from 'lucide-react';
+import { Plus, Sparkles, Link as LinkIcon, Grid3X3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Sample data for demonstration
@@ -116,6 +116,7 @@ const Index = () => {
     selectedCategory: undefined,
   });
   const [editingLink, setEditingLink] = useState<Link | undefined>();
+  const [viewMode, setViewMode] = useState<'spherical' | 'bento'>('spherical');
 
   // Filter links based on search and category
   const filteredLinks = useMemo(() => {
@@ -225,6 +226,15 @@ const Index = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                onClick={() => setViewMode(viewMode === 'spherical' ? 'bento' : 'spherical')}
+                className="glass border-white/20 text-white hover:bg-white/20 h-12 px-4"
+              >
+                <Grid3X3 className="w-5 h-5 mr-2" />
+                {viewMode === 'spherical' ? 'Bento' : 'Spherical'}
+              </Button>
+              
               <AddLinkDialog 
                 onAddLink={handleAddLink}
                 editLink={editingLink}
@@ -239,19 +249,21 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <SearchBar
-            searchQuery={state.searchQuery}
-            onSearchChange={handleSearchChange}
-            selectedCategory={state.selectedCategory}
-            onCategoryChange={handleCategoryChange}
-            className="mb-8"
-          />
+          {/* Search Bar - Only show in bento mode */}
+          {viewMode === 'bento' && (
+            <SearchBar
+              searchQuery={state.searchQuery}
+              onSearchChange={handleSearchChange}
+              selectedCategory={state.selectedCategory}
+              onCategoryChange={handleCategoryChange}
+              className="mb-8"
+            />
+          )}
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 pb-20">
+      <main className={cn("relative z-10", viewMode === 'bento' ? "pb-20" : "")}>
         {filteredLinks.length === 0 ? (
           <div className="text-center py-20">
             <div className="glass rounded-3xl p-12 max-w-md mx-auto">
@@ -279,25 +291,38 @@ const Index = () => {
             </div>
           </div>
         ) : (
-          <div className="bento-grid">
-            {filteredLinks.map((link) => (
-              <LinkCard
-                key={link.id}
-                link={link}
+          <>
+            {viewMode === 'spherical' ? (
+              <SphericalGrid
+                links={state.links} // Use all links for spherical view
                 onEdit={setEditingLink}
                 onDelete={handleDeleteLink}
                 globalPriority={state.globalPriority}
               />
-            ))}
-          </div>
+            ) : (
+              <div className="bento-grid">
+                {filteredLinks.map((link) => (
+                  <LinkCard
+                    key={link.id}
+                    link={link}
+                    onEdit={setEditingLink}
+                    onDelete={handleDeleteLink}
+                    globalPriority={state.globalPriority}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
 
       {/* Priority Slider */}
-      <PrioritySlider
-        value={state.globalPriority}
-        onChange={handlePriorityChange}
-      />
+      {viewMode === 'bento' && (
+        <PrioritySlider
+          value={state.globalPriority}
+          onChange={handlePriorityChange}
+        />
+      )}
 
       {/* Edit Dialog */}
       {editingLink && (
