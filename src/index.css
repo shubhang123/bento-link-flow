@@ -121,7 +121,8 @@
   /* Bento Grid System */
   .bento-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-auto-rows: 140px;
     gap: 1rem;
     padding: 1.5rem;
     max-width: 1400px;
@@ -140,23 +141,45 @@
     box-shadow: var(--shadow-card-hover);
   }
 
-  /* Card Size Variants */
+  /* Non-uniform Card Size Variants */
+  .card-extra-large {
+    grid-column: span 3;
+    grid-row: span 3;
+  }
+
   .card-large {
     grid-column: span 2;
     grid-row: span 2;
-    min-height: 240px;
+  }
+
+  .card-wide {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+
+  .card-tall {
+    grid-column: span 1;
+    grid-row: span 3;
+  }
+
+  .card-medium-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
+  .card-medium-tall {
+    grid-column: span 1;
+    grid-row: span 2;
   }
 
   .card-medium {
     grid-column: span 1;
     grid-row: span 1;
-    min-height: 180px;
   }
 
   .card-small {
     grid-column: span 1;
     grid-row: span 1;
-    min-height: 120px;
   }
 
   /* Category Gradients */
@@ -260,19 +283,47 @@
 /* Responsive Grid Adjustments */
 @media (max-width: 768px) {
   .bento-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: 160px;
     padding: 1rem;
   }
   
+  .card-extra-large,
   .card-large,
+  .card-wide,
+  .card-tall,
+  .card-medium-wide,
+  .card-medium-tall,
   .card-medium {
     grid-column: span 1;
     grid-row: span 1;
   }
 }
 
+@media (min-width: 768px) and (max-width: 1199px) {
+  .bento-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  
+  .card-extra-large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .card-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .card-tall {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+}
+
 @media (min-width: 1200px) {
   .bento-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-auto-rows: 130px;
   }
 }

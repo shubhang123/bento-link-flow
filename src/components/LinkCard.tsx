@@ -35,12 +35,30 @@ const getCategoryGradient = (category: LinkCategory): string => {
   return gradients[category];
 };
 
-const getCardSize = (priority: number, globalPriority: number): string => {
+const getCardSize = (priority: number, globalPriority: number, linkId: string): string => {
   const effectivePriority = priority * (globalPriority / 100);
   
-  if (effectivePriority >= 80) return 'card-large';
-  if (effectivePriority >= 40) return 'card-medium';
-  return 'card-small';
+  // Use link ID to create consistent but varied sizing
+  const idHash = linkId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const sizeVariant = idHash % 8; // 8 different size variants
+  
+  if (effectivePriority >= 85) {
+    // Highest priority gets extra large or large variants
+    return sizeVariant < 3 ? 'card-extra-large' : 'card-large';
+  } else if (effectivePriority >= 70) {
+    // High priority gets wide, large, or tall variants
+    if (sizeVariant < 2) return 'card-large';
+    if (sizeVariant < 4) return 'card-wide';
+    return 'card-tall';
+  } else if (effectivePriority >= 40) {
+    // Medium priority gets varied medium sizes
+    if (sizeVariant < 2) return 'card-medium-wide';
+    if (sizeVariant < 4) return 'card-medium-tall';
+    return 'card-medium';
+  }
+  
+  // Low priority stays small but with some variation
+  return sizeVariant < 2 ? 'card-medium' : 'card-small';
 };
 
 const getPriorityColor = (priority: number): string => {
@@ -88,7 +106,7 @@ export const LinkCard = ({ link, onEdit, onDelete, globalPriority }: LinkCardPro
     window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
-  const cardSize = getCardSize(link.priority, globalPriority);
+  const cardSize = getCardSize(link.priority, globalPriority, link.id);
   const gradientClass = getCategoryGradient(link.category);
   const priorityColor = getPriorityColor(link.priority);
 
